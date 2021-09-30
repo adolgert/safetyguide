@@ -72,7 +72,7 @@ write.meta.data(output_file)
 At the end, there will be a TOML file in the output directory containing every input, output, and command-line argument. That file is human-readable, but it can be read with `configr` in R, or by a TOML reader in Python, Julia, or C++.
 
 That TOML looks, in part, like this, except that the inputs and outputs lists are longer.
-```{asis, eval = FALSE}
+```{R, eval = FALSE}
 [application]
   [application.runtime]
   commandline_arguments = [

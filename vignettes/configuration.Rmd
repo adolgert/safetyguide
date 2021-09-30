@@ -54,7 +54,7 @@ When there are more than a few parameters, we can use a parameter file. The [con
 
 Notice that the double-brackets are replaced with previously-defined values.
 
-```{asis, eval = FALSE}
+```{R, eval = FALSE}
 [versions]
 pfpr = "201029"
 am = "201029"
@@ -92,8 +92,9 @@ If we want to record, later, what paramters were used, we could copy this TOML f
 
 ## Command-line arguments
 
-There are several packages that help parse command-line arguments. A dependable choice is [argparse](https://github.com/trevorld/r-argparse). It looks like this:
-```{asis, eval = FALSE}
+There are several packages that help parse command-line arguments. A dependable choice is [argparse](https://github.com/trevorld/r-argparse). It looks like this, (from the package's documentation):
+
+```{r, eval = FALSE}
 > library("argparse")
 > parser <- ArgumentParser(description='Process some integers')
 > parser$add_argument('integers', metavar='N', type="integer", nargs='+',
