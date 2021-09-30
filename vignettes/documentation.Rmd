@@ -24,7 +24,7 @@ There are a few places to put documentation you might write.
 - *Vignettes* - These are R notebooks that have a special header, such as the header on this file. They become separate help pages when `pkgdown` builds a website from your documentation.
 
 A tip on using vignettes to make websites: You can test the build of a vignette locally using the command `rmarkdown::render("filename.Rmd")`. If you run this from a command line, for instance using this script,
-```{bash}
+```{bash, eval = FALSE}
 #!/bin/bash
 R -e "rmarkdown::render('${1}')"
 ```
