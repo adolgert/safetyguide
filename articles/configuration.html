@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">safetyguide</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -109,6 +109,31 @@
 <a href="#configuration" class="anchor"></a>Configuration</h1>
 <p>There are two ways we configure our code, by command-line arguments and with configuration files that have parameters.</p>
 <p>Sometimes organizations create methods for storing script parameters in a central database that’s specifically oriented for this. We won’t cover that here, but you can imagine that having a central store makes it easier to find what was used to run code in the past and record runs now.</p>
+<div id="finding-files-and-databases" class="section level2">
+<h2 class="hasAnchor">
+<a href="#finding-files-and-databases" class="anchor"></a>Finding files and databases</h2>
+<p>We run our code on laptops and on the cluster. Someone else will probably run this code next year. One of the problems with running code in different places, at different times, is that input files are changed and input databases have changed names. We can mitigate that problem by using a single layer of indirection.</p>
+<div id="finding-files-in-the-project-directory" class="section level3">
+<h3 class="hasAnchor">
+<a href="#finding-files-in-the-project-directory" class="anchor"></a>Finding files in the project directory</h3>
+<p>When you work in a package, different pieces of code can be run from different subdirectories, such as vignettes and scripts. To make this easier, you can reference files relative to the path of the package root. This command gives you the root of a package.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="http://fs.r-lib.org/reference/path_package.html">path_package</a></span><span class="op">(</span><span class="st">"safetyguide"</span><span class="op">)</span></code></pre></div>
+<p>For more complicated situations, such as finding paths relative to the root of a git repository, the <a href="https://github.com/r-lib/rprojroot">rprojroot</a> package has you covered.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">rprojroot</span><span class="fu">::</span><span class="fu"><a href="https://rprojroot.r-lib.org//reference/find_root.html">find_root</a></span><span class="op">(</span><span class="fu">rprojroot</span><span class="fu">::</span><span class="va"><a href="https://rprojroot.r-lib.org//reference/criteria.html">is_rstudio_project</a></span><span class="op">)</span>
+<span class="fu">rprojroot</span><span class="fu">::</span><span class="fu"><a href="https://rprojroot.r-lib.org//reference/find_root.html">find_root</a></span><span class="op">(</span><span class="fu">rprojroot</span><span class="fu">::</span><span class="va"><a href="https://rprojroot.r-lib.org//reference/criteria.html">is_git_root</a></span><span class="op">)</span></code></pre></div>
+</div>
+<div id="access-files-and-databases-through-a-pointer" class="section level3">
+<h3 class="hasAnchor">
+<a href="#access-files-and-databases-through-a-pointer" class="anchor"></a>Access files and databases through a pointer</h3>
+<p>The goal is to run the same code on your laptop that you run on the cluster, and to do this reliably. We accomplish that by asking the code, when it starts, to check a configuration file in the environment. That configuration file will tell it which databases are available and where to find its input data.</p>
+<p>Make a configuration file that has a <em>data root directory</em>. That way, you can define it to be in your Documents directory on your laptop, but under your team’s drive on the cluster. Then, in the code, access files by prepending the data root directory to the filename in the code.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dataroot</span> <span class="op">&lt;-</span> <span class="fu">configr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/configr/man/read.config.html">read.config</a></span><span class="op">(</span><span class="st">"~/.config/dataroot"</span><span class="op">)</span><span class="op">[</span><span class="st">"dataroot"</span><span class="op">]</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html">fread</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">dataroot</span>, <span class="st">"/project/subdir/data"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
 <div id="parameter-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#parameter-files" class="anchor"></a>Parameter Files</h2>
@@ -120,7 +145,7 @@
 <p>[options] # These affect computation but not output scientific numbers. blocksize = 16 pngres = 150</p>
 <p>This parameter file uses the word “role” to refer to the role an input or output file plays for the script. It distinguishes options, which shouldn’t affect output scientific values, from parameters, which definitely do affect output scientific values.</p>
 <p>The code can read te parameters section file with one command.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu">configr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/configr/man/read.config.html">read.config</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span><span class="op">[[</span><span class="st">"parameters"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 <p>The result is a named list of parameter values.</p>
 <p>If we want to record, later, what paramters were used, we could copy this TOML file into an output data directory.</p>
@@ -128,13 +153,17 @@
 <div id="command-line-arguments" class="section level2">
 <h2 class="hasAnchor">
 <a href="#command-line-arguments" class="anchor"></a>Command-line arguments</h2>
-<p>There are several packages that help parse command-line arguments. I’ll show <a href="">docopt</a> here, but the same principles will hold:</p>
+<p>There are several packages that help parse command-line arguments. A dependable choice is <a href="https://github.com/trevorld/r-argparse">argparse</a>. It looks like this: &gt; library(“argparse”) &gt; parser &lt;- ArgumentParser(description=‘Process some integers’) &gt; parser<span class="math inline">\(add_argument('integers', metavar='N', type="integer", nargs='+', + help='an integer for the accumulator') &gt; parser\)</span>add_argument(‘–sum’, dest=‘accumulate’, action=‘store_const’, + const=‘sum’, default=‘max’, + help=‘sum the integers (default: find the max)’) &gt; parser$print_help() usage: PROGRAM [-h] [–sum] N [N …]</p>
+<p>Process some integers</p>
+<p>positional arguments: N an integer for the accumulator</p>
+<p>optional arguments: -h, –help show this help message and exit –sum sum the integers (default: find the max)</p>
+<p>I’ll show <a href="https://github.com/docopt/docopt.R">docopt</a> below, but the same principles hold for both:</p>
 <ul>
 <li>If you parse parameters in a separate function, you can test that function more easily.</li>
 <li>There are input parameters and these are translated into algorithm parameters. Doing this translation can speed up computation.</li>
 </ul>
 <p>Here’s an example of using docopt, which looks at a formatted usage string in order to guess what your parameters must be.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">arg_parser</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">args</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span>
     <span class="va">doc</span> <span class="op">&lt;-</span> <span class="st">"pr to Rc
 Usage:
@@ -179,7 +208,7 @@ Options:
 
 
       <footer><div class="copyright">
-  <p>Developed by The package maintainer.</p>
+  <p>Developed by Andrew Dolgert.</p>
 </div>
 
 <div class="pkgdown">

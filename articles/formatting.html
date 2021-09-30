@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">safetyguide</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -111,7 +111,7 @@
 <p>R has a package called <a href="https://styler.r-lib.org/index.html">Styler</a> that formats code nicely. That package contains a function called <code>styler::style_file(filename)</code> that will reformat whole files. It won’t work to ask yourself to remember to run this command. You have to automate it, and there are three ways to do this.</p>
 <p>You can use Styler as a last-minute check, before you commit code, that it currently obeys style guidelines. If the code doesn’t obey them, git will refuse to commit. You do this by creating a <a href="https://www.atlassian.com/git/tutorials/git-hooks">pre-commit hook</a> in Git. That hook would call <code>styler::transform_files(files, dry = "on")</code> and check the returned data frame.</p>
 <p>You could, instead, ask Styler to automatically modify files before they are committed. It doesn’t seem to break anything when it reformats. In this case, you’d add a similar pre-commit hook, but it would call <code>styler::style_file(filename)</code> on each changed file.</p>
-<p>Lastly, it’s less work for each researcher if you can ask the git server to do the checks for you. You can find examples of this for github, using Github Actions, but I don’t know how to do it on IHME’s servers.</p>
+<p>It’s less work for each researcher if you can ask the git server to do the checks for you. You can find examples of this for github, using Github Actions, but I don’t know how to do it on IHME’s servers. Mike Richards recommends a complete option, to run this before committing files: R -e “styler::style_pkg(‘.’)” That will reformat every file.</p>
 </div>
   </div>
 
@@ -126,7 +126,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by The package maintainer.</p>
+  <p>Developed by Andrew Dolgert.</p>
 </div>
 
 <div class="pkgdown">

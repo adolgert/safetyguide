@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">safetyguide</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -117,11 +117,22 @@
 <li><p><em>Package help</em> - Using the same RMarkdown, you can make a page that will show up when someone types <code>help(packagename)</code>. You make this with an R source code file in the <code>R/</code> subdirectory, with the same name as the package. An <a href="https://github.com/dd-harp/globalrc/blob/main/R/globalrc.R">example</a> shows that this is an RMarkdown-formatted comment block, followed by <code>NULL</code>.</p></li>
 <li><p><em>Vignettes</em> - These are R notebooks that have a special header, such as the header on this file. They become separate help pages when <code>pkgdown</code> builds a website from your documentation.</p></li>
 </ul>
+<p>A tip on using vignettes to make websites: You can test the build of a vignette locally using the command <code><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html">rmarkdown::render("filename.Rmd")</a></code>. If you run this from a command line, for instance using this script,</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="ex">R</span> -e <span class="st">"rmarkdown::render('</span><span class="va">${1}</span><span class="st">')"</span></span></code></pre></div>
+<p>then you can be sure this command doesn’t rely on any packages or variables you have currently loaded in the R environment. It saves time to check that this works before uploading files.</p>
 </div>
 <div id="general-rules-for-documentation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#general-rules-for-documentation" class="anchor"></a>General rules for documentation</h2>
 <p>Comments and documentation should tell you why more than how, because the how is in code already, and the why explains choices and roads not taken.</p>
+<p>Software projects have four kinds of documentation, leaning more towards conceptual or practical use. Thinking of documentation this way helps you remember what kind of context the reader needs.</p>
+<ol style="list-style-type: decimal">
+<li>Tutorials - “Step by step for modifying this model.”</li>
+<li>How-to Guides - “How to run this on the cluster”</li>
+<li>Explanation - “Why this software exists for the P.I.”, the research paper.</li>
+<li>Reference</li>
+</ol>
 </div>
 <div id="documenting-research-code" class="section level2">
 <h2 class="hasAnchor">
@@ -152,7 +163,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by The package maintainer.</p>
+  <p>Developed by Andrew Dolgert.</p>
 </div>
 
 <div class="pkgdown">
