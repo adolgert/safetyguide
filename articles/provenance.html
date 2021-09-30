@@ -159,9 +159,50 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/write.meta.data.html">write.meta.data</a></span><span class="op">(</span><span class="va">output_file</span><span class="op">)</span></code></pre></div>
 <p>At the end, there will be a TOML file in the output directory containing every input, output, and command-line argument. That file is human-readable, but it can be read with <code>configr</code> in R, or by a TOML reader in Python, Julia, or C++.</p>
-<p>That TOML looks, in part, like this, except that the inputs and outputs lists are longer. [application] [application.runtime] commandline_arguments = [ ‘/usr/local/lib/R/bin/exec/R’, ‘–no-save’, ‘–no-restore’, ‘–no-echo’, ‘–no-restore’, ‘–file=rc_kappa_run.R’, ‘–args’, ‘–config=210908_world.toml’, ‘–outvars=210909_single_world’, ‘–years=2019:2019’, ‘–cores=40’, ‘–draws=1000’ ] rversion = ‘4.0.5’ user = ‘adolgert’ node = ‘gen-uge-exec-p079’</p>
-<p>[inputs] [inputs.de9a93e14392061f8ba24a3501590157d5bc235b9e7029380e10b64760a027a3] creation_time = 2021-09-08T18:35:42 last_modified = 2021-09-08T18:35:42 path = ‘/ihme/code/adolgert/dev/globalrc/scripts/210908_world.toml’ role = ‘configuration’ stack = [ ‘globalrc::main()’, ‘funcmain(args)’ ] sha256 = ‘6dd9eb8e68ea128f5bf57c0917fbd0856bdef697d2e79f3099be461dfc274ac7’</p>
-<p>[inputs.8e39f2b7d7d676c428f4674a94c022dccf6b4f18eda1a575a9417a2cecf1e638] creation_time = 2020-11-20T19:02:13 last_modified = 2020-11-20T19:02:13 path = ‘/ihme/malaria_modeling/projects/globalrc/outputs/pr2ar_mesh/201105/pr2ar_mesh.csv’ role = ‘pr2ar’ stack = [ ‘globalrc::main()’, ‘funcmain(args)’, ‘load_data(args<span class="math inline">\(config,args\)</span>pr2ar,load_extent,args$years)’ ] sha256 = ‘56a2d7941a096e9ab8b88eab4ecca0b5e8c0929829d574898ed5cf8145ae89e2’</p>
+<p>That TOML looks, in part, like this, except that the inputs and outputs lists are longer.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>[application]</span>
+<span id="cb4-2"><a href="#cb4-2"></a>  [application.runtime]</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  commandline_arguments =<span class="st"> </span>[</span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="st">'/usr/local/lib/R/bin/exec/R'</span>,</span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="st">'--no-save'</span>,</span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="st">'--no-restore'</span>,</span>
+<span id="cb4-7"><a href="#cb4-7"></a>    <span class="st">'--no-echo'</span>,</span>
+<span id="cb4-8"><a href="#cb4-8"></a>    <span class="st">'--no-restore'</span>,</span>
+<span id="cb4-9"><a href="#cb4-9"></a>    <span class="st">'--file=rc_kappa_run.R'</span>,</span>
+<span id="cb4-10"><a href="#cb4-10"></a>    <span class="st">'--args'</span>,</span>
+<span id="cb4-11"><a href="#cb4-11"></a>    <span class="st">'--config=210908_world.toml'</span>,</span>
+<span id="cb4-12"><a href="#cb4-12"></a>    <span class="st">'--outvars=210909_single_world'</span>,</span>
+<span id="cb4-13"><a href="#cb4-13"></a>    <span class="st">'--years=2019:2019'</span>,</span>
+<span id="cb4-14"><a href="#cb4-14"></a>    <span class="st">'--cores=40'</span>,</span>
+<span id="cb4-15"><a href="#cb4-15"></a>    <span class="st">'--draws=1000'</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a>  ]</span>
+<span id="cb4-17"><a href="#cb4-17"></a>  rversion =<span class="st"> '4.0.5'</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a>  user =<span class="st"> 'adolgert'</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a>  node =<span class="st"> 'gen-uge-exec-p079'</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a></span>
+<span id="cb4-21"><a href="#cb4-21"></a>[inputs]</span>
+<span id="cb4-22"><a href="#cb4-22"></a>  [inputs.de9a93e14392061f8ba24a3501590157d5bc235b9e7029380e10b64760a027a3]</span>
+<span id="cb4-23"><a href="#cb4-23"></a>  creation_time =<span class="st"> </span><span class="dv">2021-09</span><span class="op">-</span>08T18<span class="op">:</span><span class="dv">35</span><span class="op">:</span><span class="dv">42</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a>  last_modified =<span class="st"> </span><span class="dv">2021-09</span><span class="op">-</span>08T18<span class="op">:</span><span class="dv">35</span><span class="op">:</span><span class="dv">42</span></span>
+<span id="cb4-25"><a href="#cb4-25"></a>  path =<span class="st"> '/ihme/code/adolgert/dev/globalrc/scripts/210908_world.toml'</span></span>
+<span id="cb4-26"><a href="#cb4-26"></a>  role =<span class="st"> 'configuration'</span></span>
+<span id="cb4-27"><a href="#cb4-27"></a>  stack =<span class="st"> </span>[</span>
+<span id="cb4-28"><a href="#cb4-28"></a>    <span class="st">'globalrc::main()'</span>,</span>
+<span id="cb4-29"><a href="#cb4-29"></a>    <span class="st">'funcmain(args)'</span></span>
+<span id="cb4-30"><a href="#cb4-30"></a>  ]</span>
+<span id="cb4-31"><a href="#cb4-31"></a>  sha256 =<span class="st"> '6dd9eb8e68ea128f5bf57c0917fbd0856bdef697d2e79f3099be461dfc274ac7'</span></span>
+<span id="cb4-32"><a href="#cb4-32"></a></span>
+<span id="cb4-33"><a href="#cb4-33"></a>  [inputs<span class="fl">.8e39</span>f2b7d7d676c428f4674a94c022dccf6b4f18eda1a575a9417a2cecf1e638]</span>
+<span id="cb4-34"><a href="#cb4-34"></a>  creation_time =<span class="st"> </span><span class="dv">2020-11</span><span class="op">-</span>20T19<span class="op">:</span><span class="dv">02</span><span class="op">:</span><span class="dv">13</span></span>
+<span id="cb4-35"><a href="#cb4-35"></a>  last_modified =<span class="st"> </span><span class="dv">2020-11</span><span class="op">-</span>20T19<span class="op">:</span><span class="dv">02</span><span class="op">:</span><span class="dv">13</span></span>
+<span id="cb4-36"><a href="#cb4-36"></a>  path =<span class="st"> '/ihme/malaria_modeling/projects/globalrc/outputs/pr2ar_mesh/201105/pr2ar_mesh.csv'</span></span>
+<span id="cb4-37"><a href="#cb4-37"></a>  role =<span class="st"> 'pr2ar'</span></span>
+<span id="cb4-38"><a href="#cb4-38"></a>  stack =<span class="st"> </span>[</span>
+<span id="cb4-39"><a href="#cb4-39"></a>    <span class="st">'globalrc::main()'</span>,</span>
+<span id="cb4-40"><a href="#cb4-40"></a>    <span class="st">'funcmain(args)'</span>,</span>
+<span id="cb4-41"><a href="#cb4-41"></a>    <span class="st">'load_data(args$config,args$pr2ar,load_extent,args$years)'</span></span>
+<span id="cb4-42"><a href="#cb4-42"></a>  ]</span>
+<span id="cb4-43"><a href="#cb4-43"></a>  sha256 =<span class="st"> '56a2d7941a096e9ab8b88eab4ecca0b5e8c0929829d574898ed5cf8145ae89e2'</span></span></code></pre></div>
 </div>
   </div>
 

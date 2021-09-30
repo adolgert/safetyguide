@@ -139,13 +139,32 @@
 <a href="#parameter-files" class="anchor"></a>Parameter Files</h2>
 <p>When there are more than a few parameters, we can use a parameter file. The <a href="https://cran.r-project.org/web/packages/config/vignettes/introduction.html">configr package</a> can read parameter files written in <a href="https://yaml.org">YAML</a> or <a href="https://toml.io">TOML</a>. TOML has a more regular syntax, so let’s use that below.</p>
 <p>Notice that the double-brackets are replaced with previously-defined values.</p>
-<p>[versions] pfpr = “201029” am = “201029” outvars = “201122_1000”</p>
-<p>[roles] pfpr = “/globalrc/inputs/PfPR_medians/{{pfpr}}” am = “/globalrc/inputs/AM_medians/{{am}}” outvars = “/globalrc/outputs/basicr/{{outvars}}”</p>
-<p>[parameters] # These are scientific parameters. kam = 0.6 # modifies AM to get rho b = 0.55 # biting random_seed = 24243299 confidence_percent = 95 pfpr_min = 0.02 pfpr_max = 0.98</p>
-<p>[options] # These affect computation but not output scientific numbers. blocksize = 16 pngres = 150</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>[versions]</span>
+<span id="cb4-2"><a href="#cb4-2"></a>pfpr =<span class="st"> "201029"</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>am =<span class="st"> "201029"</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>outvars =<span class="st"> "201122_1000"</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a></span>
+<span id="cb4-6"><a href="#cb4-6"></a>[roles]</span>
+<span id="cb4-7"><a href="#cb4-7"></a>pfpr =<span class="st"> "/globalrc/inputs/PfPR_medians/{{pfpr}}"</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>am =<span class="st"> "/globalrc/inputs/AM_medians/{{am}}"</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a>outvars =<span class="st"> "/globalrc/outputs/basicr/{{outvars}}"</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a></span>
+<span id="cb4-11"><a href="#cb4-11"></a>[parameters]</span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co"># These are scientific parameters.</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a>kam =<span class="st"> </span><span class="fl">0.6</span>  <span class="co"># modifies AM to get rho</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a>b =<span class="st"> </span><span class="fl">0.55</span>  <span class="co"># biting</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a>random_seed =<span class="st"> </span><span class="dv">24243299</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a>confidence_percent =<span class="st"> </span><span class="dv">95</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a>pfpr_min =<span class="st"> </span><span class="fl">0.02</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a>pfpr_max =<span class="st"> </span><span class="fl">0.98</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a></span>
+<span id="cb4-20"><a href="#cb4-20"></a>[options]</span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="co"># These affect computation but not output scientific numbers.</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a>blocksize =<span class="st"> </span><span class="dv">16</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a>pngres =<span class="st"> </span><span class="dv">150</span></span></code></pre></div>
 <p>This parameter file uses the word “role” to refer to the role an input or output file plays for the script. It distinguishes options, which shouldn’t affect output scientific values, from parameters, which definitely do affect output scientific values.</p>
 <p>The code can read te parameters section file with one command.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu">configr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/configr/man/read.config.html">read.config</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span><span class="op">[[</span><span class="st">"parameters"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 <p>The result is a named list of parameter values.</p>
 <p>If we want to record, later, what paramters were used, we could copy this TOML file into an output data directory.</p>
@@ -153,17 +172,32 @@
 <div id="command-line-arguments" class="section level2">
 <h2 class="hasAnchor">
 <a href="#command-line-arguments" class="anchor"></a>Command-line arguments</h2>
-<p>There are several packages that help parse command-line arguments. A dependable choice is <a href="https://github.com/trevorld/r-argparse">argparse</a>. It looks like this: &gt; library(“argparse”) &gt; parser &lt;- ArgumentParser(description=‘Process some integers’) &gt; parser<span class="math inline">\(add_argument('integers', metavar='N', type="integer", nargs='+', + help='an integer for the accumulator') &gt; parser\)</span>add_argument(‘–sum’, dest=‘accumulate’, action=‘store_const’, + const=‘sum’, default=‘max’, + help=‘sum the integers (default: find the max)’) &gt; parser$print_help() usage: PROGRAM [-h] [–sum] N [N …]</p>
-<p>Process some integers</p>
-<p>positional arguments: N an integer for the accumulator</p>
-<p>optional arguments: -h, –help show this help message and exit –sum sum the integers (default: find the max)</p>
+<p>There are several packages that help parse command-line arguments. A dependable choice is <a href="https://github.com/trevorld/r-argparse">argparse</a>. It looks like this, (from the package’s documentation):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="op">&gt;</span><span class="st"> </span><span class="kw">library</span>(<span class="st">"argparse"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="op">&gt;</span><span class="st"> </span>parser &lt;-<span class="st"> </span><span class="kw">ArgumentParser</span>(<span class="dt">description=</span><span class="st">'Process some integers'</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="op">&gt;</span><span class="st"> </span>parser<span class="op">$</span><span class="kw">add_argument</span>(<span class="st">'integers'</span>, <span class="dt">metavar=</span><span class="st">'N'</span>, <span class="dt">type=</span><span class="st">"integer"</span>, <span class="dt">nargs=</span><span class="st">'+'</span>,</span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="op">+</span><span class="st">                    </span><span class="dt">help=</span><span class="st">'an integer for the accumulator'</span>)</span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="op">&gt;</span><span class="st"> </span>parser<span class="op">$</span><span class="kw">add_argument</span>(<span class="st">'--sum'</span>, <span class="dt">dest=</span><span class="st">'accumulate'</span>, <span class="dt">action=</span><span class="st">'store_const'</span>,</span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="op">+</span><span class="st">                    </span><span class="dt">const=</span><span class="st">'sum'</span>, <span class="dt">default=</span><span class="st">'max'</span>,</span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="op">+</span><span class="st">                    </span><span class="dt">help=</span><span class="st">'sum the integers (default: find the max)'</span>)</span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="op">&gt;</span><span class="st"> </span>parser<span class="op">$</span><span class="kw">print_help</span>()</span>
+<span id="cb6-9"><a href="#cb6-9"></a>usage<span class="op">:</span><span class="st"> </span>PROGRAM [<span class="op">-</span>h] [<span class="op">--</span>sum] N [N ...]</span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a>Process some integers</span>
+<span id="cb6-12"><a href="#cb6-12"></a></span>
+<span id="cb6-13"><a href="#cb6-13"></a>positional arguments<span class="op">:</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="st">  </span>N           an integer <span class="cf">for</span> the accumulator</span>
+<span id="cb6-15"><a href="#cb6-15"></a></span>
+<span id="cb6-16"><a href="#cb6-16"></a>optional arguments<span class="op">:</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="st">  </span><span class="op">-</span>h, <span class="op">--</span>help  show this help message and exit</span>
+<span id="cb6-18"><a href="#cb6-18"></a>  <span class="op">--</span>sum       sum the <span class="kw">integers</span> (default<span class="op">:</span><span class="st"> </span>find the max)</span></code></pre></div>
 <p>I’ll show <a href="https://github.com/docopt/docopt.R">docopt</a> below, but the same principles hold for both:</p>
 <ul>
 <li>If you parse parameters in a separate function, you can test that function more easily.</li>
 <li>There are input parameters and these are translated into algorithm parameters. Doing this translation can speed up computation.</li>
 </ul>
 <p>Here’s an example of using docopt, which looks at a formatted usage string in order to guess what your parameters must be.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">arg_parser</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">args</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span>
     <span class="va">doc</span> <span class="op">&lt;-</span> <span class="st">"pr to Rc
 Usage:
