@@ -27,7 +27,7 @@ There is a line in the book _Legacy Code_ that says a log server is the first th
 
 We want an interface to logging that lets us configure it once, either by examining environment variables or by looking at command-line arguments. Find this code in the package source under `logging.R`. It uses the [futile.logger](https://cran.r-project.org/web/packages/futile.logger/index.html) package underneath.
 
-```{r}
+```{r, eval = FALSE}
 if (args["log"] == "local") {
   safetyguide::local_logging("debug")
 } else {
@@ -37,7 +37,7 @@ if (args["log"] == "local") {
 
 Then, in the code itself, log at levels for tracing, debugging, info, warning, or error.
 
-```{r}
+```{r, eval = FALSE}
 value <- 7
 loginfo(paste("Had a problem with", value, "items"))
 logtrace("entering core function")
@@ -66,7 +66,7 @@ As a last note, the way this code is written means that we can use `futile.logge
 
 R let's you say what it prints when there is an error. For work on the cluster, it helps to ask R to tell you more about what went wrong. This is an example of how you would configure R to report more to the screen.
 
-```{r}
+```{r, eval = FALSE}
 #' Asks R for a stack trace that shows which function had the problem.
 #'
 #' https://renkun.me/2020/03/31/a-simple-way-to-show-stack-trace-on-error-in-r/

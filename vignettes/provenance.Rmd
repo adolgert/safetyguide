@@ -51,21 +51,21 @@ How much you save depends on cost to write the code to gather the information an
 There is a file in this repository called `provenance_spy.R`. Mike Richards wrote it, and I modified it. We will use it to record every file read and file write.
 
 Record provenance before a file read, and include an argument to specify what role that file plays for this application, this time that it's read.
-```{r}
+```{r, eval = FALSE}
 filename <- "pr2ar.txt"
 prov.input.file(filename, "pr-ar-matrix")
 pr2ar <- data.table::fread(filename)
 ```
 
 Record provenance of outputs after they are written, so that the code can compute the hash value of the written file. Again, add a role for that file.
-```{r}
+```{r, eval = FALSE}
 raster_obj <- raster::setValues(raster_obj, ready_data)
 raster::writeRaster(raster_obj, filename = out_fn, format = "GTiff")
 prov.output.file(out_fn, "rc")
 ```
 
 At the end of the application, write the provenance to a file in the output directory.
-```{r}
+```{r, eval = FALSE}
 write.meta.data(output_file)
 ```
 

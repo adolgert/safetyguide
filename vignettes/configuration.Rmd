@@ -22,7 +22,7 @@ When there are more than a few parameters, we can use a parameter file. The [con
 
 Notice that the double-brackets are replaced with previously-defined values.
 
-```{toml, eval = FALSE}
+```{asis, eval = FALSE}
 [versions]
 pfpr = "201029"
 am = "201029"
@@ -51,7 +51,7 @@ pngres = 150
 This parameter file uses the word "role" to refer to the role an input or output file plays for the script. It distinguishes options, which shouldn't affect output scientific values, from parameters, which definitely do affect output scientific values.
 
 The code can read te parameters section file with one command.
-```{r readparams}
+```{r readparams, eval = FALSE}
 parameters <- configr::read.config(config)[["parameters"]]
 ```
 The result is a named list of parameter values.
@@ -66,7 +66,7 @@ There are several packages that help parse command-line arguments. I'll show [do
 - There are input parameters and these are translated into algorithm parameters. Doing this translation can speed up computation.
 
 Here's an example of using docopt, which looks at a formatted usage string in order to guess what your parameters must be.
-```{r}
+```{r, eval = FALSE}
 arg_parser <- function(args = NULL) {
     doc <- "pr to Rc
 Usage:
