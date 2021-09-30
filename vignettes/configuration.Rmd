@@ -93,7 +93,7 @@ If we want to record, later, what paramters were used, we could copy this TOML f
 ## Command-line arguments
 
 There are several packages that help parse command-line arguments. A dependable choice is [argparse](https://github.com/trevorld/r-argparse). It looks like this:
-```{asis}
+```{asis, eval = FALSE}
 > library("argparse")
 > parser <- ArgumentParser(description='Process some integers')
 > parser$add_argument('integers', metavar='N', type="integer", nargs='+',

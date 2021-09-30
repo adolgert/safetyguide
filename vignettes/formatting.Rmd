@@ -20,7 +20,7 @@ You can use Styler as a last-minute check, before you commit code, that it curre
 You could, instead, ask Styler to automatically modify files before they are committed. It doesn't seem to break anything when it reformats. In this case, you'd add a similar pre-commit hook, but it would call `styler::style_file(filename)` on each changed file.
 
 It's less work for each researcher if you can ask the git server to do the checks for you. You can find examples of this for github, using Github Actions, but I don't know how to do it on IHME's servers. Mike Richards recommends a complete option, to run this before committing files:
-```{asis}
+```{asis, eval = FALSE}
 R -e "styler::style_pkg('.')"
 ```
 That will reformat every file.
