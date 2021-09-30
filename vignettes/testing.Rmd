@@ -54,7 +54,7 @@ Most times, it's harder to spot than this.
 
 There are tools to measure complexity in code, and they can highlight places the code is hard to reason about. It looks like the most popular, [Sonarqube](https://www.sonarqube.org/), still doesn't support R. By eye, you would look for two properties of code:
 
-1.  Cyclomatic complexity - This is the number of paths through code, which corresponds to the number of if-then branches. Beware that each selection of indices in a dataframe is another branch in the code.
+1.  Cyclomatic complexity - This is the number of paths through code, which corresponds to the number of if-then branches. Beware that each selection of indices in a dataframe is another branch in the code. You can check this with a [package](https://github.com/MangoTheCat/cyclocomp) in R.
 
 2.  Halstead complexity - This is the number of mathematical operatons (addition, multiplication), and calls to math functions like `sin`. In other words, it's where your math and models lie, but you were staring at that code, anyway.
 
@@ -100,7 +100,9 @@ There are other tests we might use during development, but these very high tests
 
 Sometimes it matters that the numbers in R's code aren't numbers on the real number line. I ran into this for [life tables](https://computingkitchen.com/2020/09/02/Mean-Age.html), but it's generally known as numerical analysis of IEEE floating point.
 
--   Overton, *Numerical Computing with IEEE Floating Point Arithmetic*, is available throught the UW library, and it gives a basic howto for getting through floating-point calculations when things look incorrect.
+- [Finite precision in an infinite world](https://www.tandfonline.com/doi/full/10.1080/10724117.2019.1611061), by Cameron and Chartier, Math Horizons, 2019.
+
+-   Overton, *Numerical Computing with IEEE Floating Point Arithmetic*, is a short book available through the UW library, and it gives a basic howto for getting through floating-point calculations when things look incorrect.
 
 -   Higham's *Accuracy and Stability of Numerical Algorithms* is a tome on the subject.
 
@@ -117,6 +119,25 @@ As researchers, most of how we understand the correctness of our code is by comp
 -   to a less efficient version
 
 These become unit tests when you put the data into the `testthat` directory and choose an L1, L2, or L-infinity norm with which to compare the two results.
+
+
+### Comparison with theory
+
+It gives me confidence in code when I can compare its output with an exact result. This may only work for particular settings, or for a reduced form of the problem, but it means that, in at least one instance, it was absolutely correct.
+
+For example, we forecast future populations using Leslie matrices. If I synthesize a population with a constant growth rate, then the Leslie matrix, constructed from that population, should have a lead eigenvalue with that same growth rate. That's a strong check.
+
+But we discussed above the idea that some tests have more information than others. There is a closed-form solution for a population that oscillates in size. This Leslie matrix will have a second eigenvalue that describes that oscillation. If my simulation matches that solution, I have much more confidence that there aren't errors.
+
+
+### Testing stochastic functions
+
+If you need to test a function that returns random values, use you statistical knowledge to help your software task.
+
+Because unit tests aren't for publication, there is no reason not to favor *robust statistics.* Go ahead and use a trimmed mean and trimmed variance to evaluate a custom distribution. These will be more stable against outliers. Nobody wants to have to go back and redo a quantile plot, once code is in use.
+
+Before calling functions in a unit test, *pin the random seed* to a single value with `set.seed(9273424)`. Otherwise, a unit test will sometimes fail, even after it passed, and that kind of spurious signal means people won't pay attention to failures. If you want to ensure testing is more thorough, then, when you modify a function's source code, run its stochastic tests for a longer burn-in period. Let them run an hour, if you want, before reducing draws so that unit tests take a reasonable time.
+
 
 ### Symmetry of results
 

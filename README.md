@@ -9,3 +9,6 @@ This repository is a set of suggestions for how to write research code in an R p
 - Configuration files and command-line arguments
 - Testing
 - Documentation
+- Provenance
+
+Look at the Articles tab, above.

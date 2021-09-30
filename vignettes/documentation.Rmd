@@ -23,10 +23,23 @@ There are a few places to put documentation you might write.
 
 - *Vignettes* - These are R notebooks that have a special header, such as the header on this file. They become separate help pages when `pkgdown` builds a website from your documentation.
 
+A tip on using vignettes to make websites: You can test the build of a vignette locally using the command `rmarkdown::render("filename.Rmd")`. If you run this from a command line, for instance using this script,
+```{bash}
+#!/bin/bash
+R -e "rmarkdown::render('${1}')"
+```
+then you can be sure this command doesn't rely on any packages or variables you have currently loaded in the R environment. It saves time to check that this works before uploading files.
 
 ## General rules for documentation
 
 Comments and documentation should tell you why more than how, because the how is in code already, and the why explains choices and roads not taken.
+
+Software projects have four kinds of documentation, leaning more towards conceptual or practical use. Thinking of documentation this way helps you remember what kind of context the reader needs.
+
+1. Tutorials - "Step by step for modifying this model."
+2. How-to Guides - "How to run this on the cluster"
+3. Explanation - "Why this software exists for the P.I.", the research paper.
+4. Reference
 
 
 ## Documenting research code
