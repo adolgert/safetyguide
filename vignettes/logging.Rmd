@@ -1,0 +1,87 @@
+---
+title: "Logging"
+description: >
+  How to use logging in a research package.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Logging}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Logging
+
+If you want to print something from a script, the `paste` and `cat` work well for personal, interactive use. When you write code for the cluster, it means the same script has to work under several different conditions:
+
+1.  Run on your local machine.
+2.  Run on the cluster in production mode.
+3.  Run on the cluster so you can search for a bug.
+
+A logging library gives you a way to control how much the script prints and where that output goes, so that you can tailor the script's output to the current conditions. If you're set up to use a logging library, you're also set up to write logs to a log server.
+
+## Log Servers
+
+There is a line in the book _Legacy Code_ that says a log server is the first thing you set up if you don't want your boss to come banging on your door at all hours. A log server is low on Maslow's pyramid of programmer needs. It is a central place that all logs are saved from all code executions. It has a specified policy for when logs are deleted. It's a lifesaver if you need to know something about a run six months ago.
+
+## How to call a logger
+
+We want an interface to logging that lets us configure it once, either by examining environment variables or by looking at command-line arguments. Find this code in the package source under `logging.R`. It uses the [futile.logger](https://cran.r-project.org/web/packages/futile.logger/index.html) package underneath.
+
+```{r}
+if (args["log"] == "local") {
+  safetyguide::local_logging("debug")
+} else {
+  safetyguide::cluster_logging("info", error_file = "out.log")
+}
+```
+
+Then, in the code itself, log at levels for tracing, debugging, info, warning, or error.
+
+```{r}
+value <- 7
+loginfo(paste("Had a problem with", value, "items"))
+logtrace("entering core function")
+logdebug("On the 3rd iteration.")
+```
+
+## Log levels
+
+As a rule of thumb,
+
+-   trace - This output is meant to be read by another program, not a person. It can announce entry and exit of individual functions, for instance.
+
+-   debug - What you print in order to know if an algorithm is working as expected. The *Debugging Applications* book recommends never deleting these statements if they are written with a logger at the debug level.
+
+-   info - What you would put into a print statement, and print on every run. These could include the names of files read and written, or the list of command-line arguments. They could announce the choice of which algorithm to run. These are stored in cluster logs and can serve as provenance.
+
+-   warning - Something that is likely a problem but is recoverable. If you use these as todo reminders, then you will miss actual warnings.
+
+-   error - An error may be recoverable, but the code that finds the error cannot recover. An outer layer of code, running an error handler, may deal with it.
+
+-   fatal - A non-recoverable error, as determined by the local code.
+
+As a last note, the way this code is written means that we can use `futile.logger`, or another logging package, underneath, and the main code won't need to change.
+
+## Improving error messages for logging
+
+R let's you say what it prints when there is an error. For work on the cluster, it helps to ask R to tell you more about what went wrong. This is an example of how you would configure R to report more to the screen.
+
+```{r}
+#' Asks R for a stack trace that shows which function had the problem.
+#'
+#' https://renkun.me/2020/03/31/a-simple-way-to-show-stack-trace-on-error-in-r/
+#' @export
+improved_errors <- function() {
+    options(error = function() {
+        sink(stderr())
+        on.exit(sink(NULL))
+        traceback(3, max.lines = 1L)
+        if (!interactive()) {
+            q(status = 1)
+        }
+    })
+}
+improved_errors()
+```
+
+The principle applies more generally, that a specific error message is more useful than a general one. In R, that means using the `paste()` command to insert variable values into logging messages. Watch out for these variables however, because error messages are rarely tested, so that a mis-typed variable name can make an error message, itself, become an error.

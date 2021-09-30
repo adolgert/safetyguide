@@ -1,0 +1,53 @@
+---
+title: "Organization"
+description: >
+  Organizing functions for a research application
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Organization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+# Organization of lines of code inside a research application
+
+## The algorithm-and-data-movement paradigm
+
+We talk about using a particular algorithm to solve a coding problem. Algorithms come up in blog posts, data science books, and computer science classes. We analyze algorithms in order to understand their memory and CPU usage. Because research code often challenges memory and CPU resources, it can help to arrange the code so that the algorithms are separate pieces.
+
+Here's a sample layout of a program as a set of algorithms separated by data movement.
+
+1.  Parse input arguments.
+2.  Read input data.
+3.  Transform input data into a data structure suitable for the next algorithm.
+4.  Execute algorithm 1.
+5.  Transform the output of algorithm 1 into a data structure suitable for the next algorithm.
+6.  Execute algorithm 2.
+7.  Transform data for saving.
+8.  Write output data.
+
+We split computation into these pieces because it makes testing simpler. Test that use input and output files are harder to write because you have to write the data to disk inside the test, itself. By separating the algorithm from its input and output, you can now call a simple function in any unit test.
+
+Another reason this makes testing easier is that it groups together code that has similar kinds of bugs. During data transformation, there will be bugs that have to do with data types and type conversion. During an algorithm, bugs may include off-by-one errors and NaN values. We can focus tests on the bugs we expect from a region of code.
+
+We split computation because it makes profiling the code easier. You know that, after the initial read of input files, bytes of memory used should be less than twice the size of the input files. We expect memory to increase during data transformation steps (also known as data movement steps), and we expect CPU usage to be highest during the algorithms.
+
+We split computation because intermediate values, produced by each algorithm, have meaning to us. We can inspect those intermediate values and establish whether they look correct. We can use our intuition about them to help debug the previous algorithmic step.
+
+
+## Testable code
+
+When you're writing scientific code, it's not a framework for other software developers. You can choose to use one of R's object systems if you want, but I would focus first on making code that can be changed without breaking. In software engineering, this is called a mutability quality. This quality depends less on choice of data structure than it does on how code is organized into functions.
+
+There is a paper called _Practicing Testability in the Real World_ (2009) that gives general guidelines:
+
+- *Simplicity* - The simpler a component, the less expensive it is to test. One measure of simplicity is the complexity of equations. Another is the number of ways that component sends or receives data from other components.
+
+- *Observability* - While hiding state is good for reducing the number of connections among components, showing state makes it easier to track and test that a component does what's expected.
+
+- *Control* - If a component does a lot, give yourself a way to exercise all of its parts. If there is a code path that's rarely used, make a flag to let you ensure it's used during a test.
+
+- *Knowledge* - Is the observed behavior correct? When you factor code into parts, choose parts that, individually, do something recognizable. Give yourself a handhold at a level where you can know what the right answer is.
+
+Yes, that spells SOCK. Whether that be for woolen warmth or code combat, the suggestions should be familiar because they are echoed in this document. Logging brings observability, organization helps knowledge, and packages give you global access to test internals.

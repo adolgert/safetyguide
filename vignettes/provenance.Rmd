@@ -1,0 +1,72 @@
+---
+title: "Provenance"
+description: >
+  Provenance for research applications
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Provenance}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Provenance
+
+Provenance is a record of how data was produced. It helps us figure out which algorithm made data. It answers questions about why my result is different from yours. We can do a pretty good job of tracking provenance in R. It takes a few little tools.
+
+# Primer on provenance
+
+There is a W3C [provenance description](https://www.w3.org/TR/prov-overview/) that is thorough about what can be recorded and how to record it. That would be helpful if we were creating a provenance system for all of IHME, but it will help even our ad-hoc attempts if we understand a few categories.
+
+*Prospective and retrospective provenance* - Prospective provenance describes the action you plan to take. It's the application you will run and arguments to call it with. It's where to find the data to read. Retrospective provenance describes what did happen. It will include not only the filename read but the size of the file found on disk. It will include not only the command-line arguments as typed but the values read by the application after Bash translated them.
+
+Prospective provenance tends to say more about what you plan to do and therefore more about why this action is being done.
+
+*Entities, agents, and activities* - Our goal is to make a causal record of the output of the research code, and that causal record is composed of entities, agents, and activities. Entities are files, database records, whole databases, or web pages. Agents are usually people, but they can refer to anything responsible for an action, such as a scheduler. An activity is something that consumes and produces entities. This is your program.
+
+We are going to record all of that information, in a bit of a jumble, but someone should be able to piece together what activity created an entity and with what agent that activity was associated.
+
+# What to save
+
+- Command-line arguments
+- The script that was invoked
+- Parameter input files
+- Git commit hash, or MD5 hash of R source files
+- List of input files and database records, hashes of those files
+- List of output files and database records, hashes of those files
+- Record of running the program (who, when, what machine)
+
+That list is standard, but you could save more, if it's relevant. For instance:
+
+- The code could record which statistical model was used for particular functions.
+- Log files, all of them
+- A list of R packages loaded and their versions
+- A copy of the R script's source code, in full
+- R's version
+- Details about the processor architecture, memory of the machine
+
+How much you save depends on cost to write the code to gather the information and to store the data. Large organizations have a provenance budget, as a percentage of the size of total data, and it can be as high as thirty percent, because provenance makes the results more valuable.
+
+# How to save it
+
+There is a file in this repository called `provenance_spy.R`. Mike Richards wrote it, and I modified it. We will use it to record every file read and file write.
+
+Record provenance before a file read, and include an argument to specify what role that file plays for this application, this time that it's read.
+```{r}
+filename <- "pr2ar.txt"
+prov.input.file(filename, "pr-ar-matrix")
+pr2ar <- data.table::fread(filename)
+```
+
+Record provenance of outputs after they are written, so that the code can compute the hash value of the written file. Again, add a role for that file.
+```{r}
+raster_obj <- raster::setValues(raster_obj, ready_data)
+raster::writeRaster(raster_obj, filename = out_fn, format = "GTiff")
+prov.output.file(out_fn, "rc")
+```
+
+At the end of the application, write the provenance to a file in the output directory.
+```{r}
+write.meta.data(output_file)
+```
+
+At the end, there will be a TOML file in the output directory containing every input, output, and command-line argument. That file is human-readable, but it can be read with `configr` in R, or by a TOML reader in Python, Julia, or C++.

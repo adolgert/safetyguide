@@ -1,0 +1,22 @@
+---
+title: "Formatting"
+description: >
+  Formatting for research packages
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Formatting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Format Code Consistently
+
+If you have to read someone else's code, and we do all the time, then it helps if that code looks familiar. The spacing and use of symbols (`=` vs `<-`) is one kind of unfamiliarity that challenges our ability to understand what code does.
+
+R has a package called [Styler](https://styler.r-lib.org/index.html) that formats code nicely. That package contains a function called `styler::style_file(filename)` that will reformat whole files. It won't work to ask yourself to remember to run this command. You have to automate it, and there are three ways to do this.
+
+You can use Styler as a last-minute check, before you commit code, that it currently obeys style guidelines. If the code doesn't obey them, git will refuse to commit. You do this by creating a [pre-commit hook](https://www.atlassian.com/git/tutorials/git-hooks) in Git. That hook would call `styler::transform_files(files, dry = "on")` and check the returned data frame.
+
+You could, instead, ask Styler to automatically modify files before they are committed. It doesn't seem to break anything when it reformats. In this case, you'd add a similar pre-commit hook, but it would call `styler::style_file(filename)` on each changed file.
+
+Lastly, it's less work for each researcher if you can ask the git server to do the checks for you. You can find examples of this for github, using Github Actions, but I don't know how to do it on IHME's servers.

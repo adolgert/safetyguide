@@ -1,0 +1,50 @@
+---
+title: "Documentation"
+description: >
+  Documentation for a research application
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Documentation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Documentation
+
+## Mechanics
+
+There are a few places to put documentation you might write.
+
+- *README.md* - The git repository, which contains the package you are writing, can have a README.md or README.txt file at its root. This file is a good place to say what the package is and does. Pretend the reader was just spun around blindfolded and given a fortune cookie with one line to describe what your repository does.
+
+- *Function documentation* - R has a [standard documentation tool](https://r-pkgs.org/man.html) that uses RMarkdown to document individual functions.
+
+- *Package help* - Using the same RMarkdown, you can make a page that will show up when someone types `help(packagename)`. You make this with an R source code file in the `R/` subdirectory, with the same name as the package. An [example](https://github.com/dd-harp/globalrc/blob/main/R/globalrc.R) shows that this is an RMarkdown-formatted comment block, followed by `NULL`.
+
+- *Vignettes* - These are R notebooks that have a special header, such as the header on this file. They become separate help pages when `pkgdown` builds a website from your documentation.
+
+
+## General rules for documentation
+
+Comments and documentation should tell you why more than how, because the how is in code already, and the why explains choices and roads not taken.
+
+
+## Documenting research code
+
+It can help to accumulate photos of whiteboards, presentation slides, and any other artifacts about the code. If it's in a private repository, you can stick PDFs in there of relevant papers.
+
+I imagine you don't have much time. These suggestions are in-order, from most to least important. If you care enough to disagree with the order, then that makes us friends.
+
+1. Start with a list of references used to construct this work. They can be other codes, or they can be a list of papers.
+
+2. Describe the organization's context. This can be a team name, a principal investigator, the name of the relevant project. Write out acronyms once. Your audience for this paragraph is the next principal investigator. It's an executive summary, so it's concise and tells you what you get out of this code.
+
+3. How to run the code, for someone who doesn't know what the code does. Include estimates of memory and CPU time, for a given size input file, because that information takes time to learn for a particular code.
+
+4. A high-level description of the code. This can be accomplished by making a bulleted list of source code filenames, with a single line about each.
+
+5. If this work is based on commonly-known mathematical functions, identify some source paper, book, or other glossary. Some people don't know they can find ${}_nm_x$ in Preston's _Demography_ book.
+
+6. You may have used notebooks to develop the code. Go back to those notebooks and enter some text about why you're checking certain functions and what you're checking them against. You might convert a notebook to a vignette if it seems illustrative. You create a vignette by changing the header on a notebook to have the vignette keyword.
+
+7. If you didn't document functions along the way, find the ones that someone using the package would most likely call, and document those. You can put equations into function documentation by putting them in an inline block, `\eqn{{}_nm_x}` or a display block `\deqn{\int_0^x S(x)dx}`.

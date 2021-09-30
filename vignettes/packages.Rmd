@@ -1,0 +1,53 @@
+---
+title: "Packages"
+description: >
+  Package management for research packages.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Packages}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Use a Package
+
+Let's assume you have a directory full of scripts, and that these scripts are checked into git. The scripts can `source` each other, and git tracks version history. What do you gain from organizing this work in a package?
+
+In R, we think of packages as libraries that we import, but packages are more than a file format for exchanging code. R provides a tools that help developers of packages, and those same tools will help you, even if you never plan to put your code on CRAN for others to use. These helpers includes:
+
+1.  A standard way to write and run tests. Tests go in the `tests/` subdirectory, and everybody uses the `testthat` package. If you write tests in the [`testthat`](https://testthat.r-lib.org/) directory, then RStudio will run your tests with a single command-key.
+
+2.  A standard way to build documentation. You've probably seen [RMarkdown](https://r-pkgs.org/man.html#man-workflow) to document functions. If you have a package, then you can put R notebooks into the `vignettes/` subdirectory, and the [pkgdown](https://pkgdown.r-lib.org/) package can build them into a nice webpage.
+
+3.  A namespace. All of the functions in a package, in all files, can see other functions in the package. There is no need to `source` a script in order to call its functions. This also means that you have to keep track of what packages your script uses, which makes it less likely you'll run a cluster job, only to find a dependency is missing.
+
+# Package Layout
+
+There is a standard set of directories to define in an R package, and RStudio will generate a package layout that looks like this:
+
+-   inst/ - For non-source files that should be installed with the package.
+
+-   man/ - Where the RMarkdown function documentation will automatically go.
+
+-   R/ - For package R source files.
+
+-   src/ - For C++ files.
+
+-   tests/ - Unit tests here.
+
+-   vignettes/ - These notebooks will be used to populate the packages pkgdown page.
+
+I add two directories to this list.
+
+-   scripts/ - Here, I put R source files that I run on the cluster or locally. These are the scripts I invoke directly from a command line.
+
+-   notebooks/ - I used to put all my .Rmd files into vignettes, but now pkgdown turns those into help files, which most of my notebooks aren't, so I put them here.
+
+The scripts and notebooks use `library(mypackage)` to load the package in which they sit. That's how they use the R source code you write. The scripts can be two-line calls into the library, or they can be longer.
+
+```{r, eval = FALSE}
+library(safetyguide)
+safetyguide::calculate()
+```
+
+Whenever I write code, I've tried it, at least once, in a notebook. Maybe I made a plot with it or a table of values to scan. These interactive trials make good tests, if you can move them to the `tests/` directory under testthat. A high-level test, of the sort you would normally plot, is worth a raft of low-level unit tests.

@@ -1,0 +1,101 @@
+---
+title: "Configuration"
+description: >
+  Configuration for research codes
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Configuration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Configuration
+
+There are two ways we configure our code, by command-line arguments and with configuration files that have parameters.
+
+Sometimes organizations create methods for storing script parameters in a central database that's specifically oriented for this. We won't cover that here, but you can imagine that having a central store makes it easier to find what was used to run code in the past and record runs now.
+
+## Parameter Files
+
+When there are more than a few parameters, we can use a parameter file. The [configr package](https://cran.r-project.org/web/packages/config/vignettes/introduction.html) can read parameter files written in [YAML](https://yaml.org) or 
+[TOML](https://toml.io). TOML has a more regular syntax, so let's use that below.
+
+Notice that the double-brackets are replaced with previously-defined values.
+
+```{toml, eval = FALSE}
+[versions]
+pfpr = "201029"
+am = "201029"
+outvars = "201122_1000"
+
+[roles]
+pfpr = "/globalrc/inputs/PfPR_medians/{{pfpr}}"
+am = "/globalrc/inputs/AM_medians/{{am}}"
+outvars = "/globalrc/outputs/basicr/{{outvars}}"
+
+[parameters]
+# These are scientific parameters.
+kam = 0.6  # modifies AM to get rho
+b = 0.55  # biting
+random_seed = 24243299
+confidence_percent = 95
+pfpr_min = 0.02
+pfpr_max = 0.98
+
+[options]
+# These affect computation but not output scientific numbers.
+blocksize = 16
+pngres = 150
+```
+
+This parameter file uses the word "role" to refer to the role an input or output file plays for the script. It distinguishes options, which shouldn't affect output scientific values, from parameters, which definitely do affect output scientific values.
+
+The code can read te parameters section file with one command.
+```{r readparams}
+parameters <- configr::read.config(config)[["parameters"]]
+```
+The result is a named list of parameter values.
+
+If we want to record, later, what paramters were used, we could copy this TOML file into an output data directory.
+
+## Command-line arguments
+
+There are several packages that help parse command-line arguments. I'll show [docopt]() here, but the same principles will hold:
+
+- If you parse parameters in a separate function, you can test that function more easily.
+- There are input parameters and these are translated into algorithm parameters. Doing this translation can speed up computation.
+
+Here's an example of using docopt, which looks at a formatted usage string in order to guess what your parameters must be.
+```{r}
+arg_parser <- function(args = NULL) {
+    doc <- "pr to Rc
+Usage:
+  rc_kappa.R [options]
+  rc_kappa.R (-h | --help)
+Options:
+  -h --help              Show help.
+  --config=<config>      A configuration file.
+  --country=<alpha3>     The three-letter country code for a country's outline.
+  --outvars=<outversion> Version of output to write.
+  --overwrite            Whether to overwrite outputs.
+  --years=<year_range>   A range of years to do, as an R range, 2000:2010.
+  --cores=<core_cnt>     Tell it how many cores to use in parallel.
+  --draws=<draw_cnt>     How many draws to use.
+  --task=<task_id>       If this is a task, which task.
+  --tasks=<task_cnt>     Total number of tasks. You should set this for workers.
+"
+    if (is.null(args)) {
+        args <- commandArgs(TRUE)
+    }
+    parsed_args <- docopt::docopt(doc, version = "rc_kappa 1.0", args = args)
+    if (is.null(parsed_args$config)) {
+        parsed_args$config <- "rc_kappa.toml"
+    }
+    parsed_args
+}
+```
+This function accepts an `args` argument so that a unit test can pass in candidate versions of `commandArgs()` output and check that they are parsed as expected.
+
+It may seem silly to think about testing command-line parameters. I test them because I've had to change parameter values at 3 AM before submitting cluster jobs that would take a week to run. I really want to know I didn't make a typo, before the job launches, so I add a test and run the test suite before submitting the job.
+
+It is often the case that there is a difference between how you want to specify values to a program and what the core algorithm needs. For instance, you may specify a quantile in the input, and then the algorithm works with that quantile of a particular distribution. There is a translation step, and doing it once can save a little processing time. More importantly, it can make later calculation code clearer. This means there can be a parameter translation step early in the code, if you think that helps a particular code base.
