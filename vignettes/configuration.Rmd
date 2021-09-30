@@ -35,6 +35,18 @@ rprojroot::find_root(rprojroot::is_git_root)
 ```
 
 
+### Access files and databases through a pointer
+
+The goal is to run the same code on your laptop that you run on the cluster, and to do this reliably. We accomplish that by asking the code, when it starts, to check a configuration file in the environment. That configuration file will tell it which databases are available and where to find its input data.
+
+Make a configuration file that has a _data root directory_. That way, you can define it to be in your Documents directory on your laptop, but under your team's drive on the cluster. Then, in the code, access files by prepending the data root directory to the filename in the code.
+
+```{r, eval = FALSE}
+dataroot <- configr::read.config("~/.config/dataroot")["dataroot"]
+df <- data.table::fread(file.path(dataroot, "/project/subdir/data"))
+```
+
+
 ## Parameter Files
 
 When there are more than a few parameters, we can use a parameter file. The [configr package](https://cran.r-project.org/web/packages/config/vignettes/introduction.html) can read parameter files written in [YAML](https://yaml.org) or 
