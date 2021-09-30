@@ -70,3 +70,52 @@ write.meta.data(output_file)
 ```
 
 At the end, there will be a TOML file in the output directory containing every input, output, and command-line argument. That file is human-readable, but it can be read with `configr` in R, or by a TOML reader in Python, Julia, or C++.
+
+That TOML looks, in part, like this, except that the inputs and outputs lists are longer.
+```{asis}
+[application]
+  [application.runtime]
+  commandline_arguments = [
+    '/usr/local/lib/R/bin/exec/R',
+    '--no-save',
+    '--no-restore',
+    '--no-echo',
+    '--no-restore',
+    '--file=rc_kappa_run.R',
+    '--args',
+    '--config=210908_world.toml',
+    '--outvars=210909_single_world',
+    '--years=2019:2019',
+    '--cores=40',
+    '--draws=1000'
+  ]
+  rversion = '4.0.5'
+  user = 'adolgert'
+  node = 'gen-uge-exec-p079'
+
+[inputs]
+  [inputs.de9a93e14392061f8ba24a3501590157d5bc235b9e7029380e10b64760a027a3]
+  creation_time = 2021-09-08T18:35:42
+  last_modified = 2021-09-08T18:35:42
+  path = '/ihme/code/adolgert/dev/globalrc/scripts/210908_world.toml'
+  role = 'configuration'
+  stack = [
+    'globalrc::main()',
+    'funcmain(args)'
+  ]
+  sha256 = '6dd9eb8e68ea128f5bf57c0917fbd0856bdef697d2e79f3099be461dfc274ac7'
+
+  [inputs.8e39f2b7d7d676c428f4674a94c022dccf6b4f18eda1a575a9417a2cecf1e638]
+  creation_time = 2020-11-20T19:02:13
+  last_modified = 2020-11-20T19:02:13
+  path = '/ihme/malaria_modeling/projects/globalrc/outputs/pr2ar_mesh/201105/pr2ar_mesh.csv'
+  role = 'pr2ar'
+  stack = [
+    'globalrc::main()',
+    'funcmain(args)',
+    'load_data(args$config,args$pr2ar,load_extent,args$years)'
+  ]
+  sha256 = '56a2d7941a096e9ab8b88eab4ecca0b5e8c0929829d574898ed5cf8145ae89e2'
+
+```
+
