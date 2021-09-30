@@ -3,9 +3,8 @@ Type: Package
 Title: Advice for research applications using R
 Version: 0.1.1
 Author: adolgert
-Maintainer: adolgert
+Maintainer: Andrew Dolgert <adolgert@uw.edu>
 Description: People asked questions about using R more effectively.
-    This advice stemmed from those questions.
 License: MIT
 Encoding: UTF-8
 LazyData: true
